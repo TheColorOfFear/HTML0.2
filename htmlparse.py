@@ -42,6 +42,7 @@ tagList = {
   'metadata': 'head',
   'document': 'body',
   'link'    : 'a',
+  'code'    : 'script',
 }
 attribList = {
   "link" : {
@@ -50,7 +51,6 @@ attribList = {
   "img"  : {
     "surf" : "src"
   },
-  "lang" : "language",
 }
 
 tags = []
@@ -94,7 +94,8 @@ for item in gridList:
       tag, attribs = doTag(item.split("{", 1)[0])
       tags.append(tag)
       output.append("<" + tags[-1] + attribs + ">")
-      output.append(item.split("{", 1)[1])
+      if (len(item.split("{", 1)) > 1):
+        output.append(item.split("{", 1)[1])
     elif splitType == 1:
       output.append("</" + tags.pop() + ">")
       output.append(item)
