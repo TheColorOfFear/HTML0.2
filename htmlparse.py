@@ -69,6 +69,9 @@ def doTag(inStr):
     for attrPair in attrFullList:
       attrList.append(attrPair.split(":"))
     for i in range(len(attrList)):
+      if attrList[i][0].lower() == "surf":
+        #quick solution probably not the best
+        attrList[i][1] = attrList[i][1].replace("grid!", "http://").replace("safe!", "https://")
       if (tag.lower() in attribList and
           type(attribList[tag.lower()]) is dict and
           attrList[i][0].lower() in attribList[tag.lower()]):
