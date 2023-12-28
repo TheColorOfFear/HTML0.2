@@ -5,6 +5,8 @@ def usage():
 
 args = sys.argv
 
+faithful = False
+
 try:
   fileIn_Path = args[1]
 except:
@@ -43,7 +45,6 @@ tagList = {
   'document': 'body',
   'link'    : 'a',
   'code'    : 'script',
-  'erl'     : 'link',
 }
 attribList = {
   "link" : {
@@ -55,10 +56,18 @@ attribList = {
   "surf" : "href",
 }
 
+if not(faithful):
+  tagList.update({
+    'erl'     : 'link',
+  })
+  attribList.update({
+    
+  })
 tags = []
 output = []
 
 def doTag(inStr):
+  ## FIX THIS, IT DOESN'T GOOD ##
   if "(" in inStr:
     tag, attribs = inStr.split("(", 1)
     attribs = attribs[:-1]
@@ -104,7 +113,10 @@ for item in gridList:
       tags.append(tag)
       output.append("<" + tags[-1] + attribs + ">")
       if (len(item.split("{", 1)) > 1):
-        output.append(item.split("{", 1)[1])
+        if tags[-1] != "script":
+          output.append(item.split("{", 1)[1].replace("<", "&lt;").replace(">", "&gt;"))
+        else:
+          output.append(item.split("{", 1)[1])
     elif splitType == 1:
       output.append("</" + tags.pop() + ">")
       output.append(item)
