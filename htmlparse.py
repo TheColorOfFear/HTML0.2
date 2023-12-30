@@ -55,6 +55,12 @@ attribList = {
   },
   "surf" : "href",
 }
+singleTags = [
+  "area", "base", "br", "col",
+  "embed", "hr", "img", "input",
+  "link", "meta", "source", "track",
+  "wbr"
+]
 
 if not(faithful):
   tagList.update({
@@ -118,7 +124,10 @@ for item in gridList:
         else:
           output.append(item.split("{", 1)[1])
     elif splitType == 1:
-      output.append("</" + tags.pop() + ">")
+      if (tags[-1] in singleTags):
+        tags.pop()
+      else:
+        output.append("</" + tags.pop() + ">")
       output.append(item)
     else:
       output.append(item)
