@@ -5,6 +5,8 @@ def usage():
 
 args = sys.argv
 
+faithful = False
+
 try:
   fileIn_Path = args[1]
 except:
@@ -51,12 +53,27 @@ attribList = {
   "img"  : {
     "surf" : "src"
   },
+  "surf" : "href",
 }
+singleTags = [
+  "area", "base", "br", "col",
+  "embed", "hr", "img", "input",
+  "link", "meta", "source", "track",
+  "wbr"
+]
 
+if not(faithful):
+  tagList.update({
+    'erl'     : 'link',
+  })
+  attribList.update({
+    
+  })
 tags = []
 output = []
 
 def doTag(inStr):
+  ## FIX THIS, IT DOESN'T GOOD ##
   if "(" in inStr:
     tag, attribs = inStr.split("(", 1)
     attribs = attribs[:-1]
@@ -69,18 +86,22 @@ def doTag(inStr):
     for attrPair in attrFullList:
       attrList.append(attrPair.split(":"))
     for i in range(len(attrList)):
-      if attrList[i][0].lower() == "surf":
-        #quick solution probably not the best
-        attrList[i][1] = attrList[i][1].replace("grid!", "http://").replace("safe!", "https://")
-      if (tag.lower() in attribList and
-          type(attribList[tag.lower()]) is dict and
-          attrList[i][0].lower() in attribList[tag.lower()]):
-        attrList[i][0] = attribList[tag.lower()][attrList[i][0].lower()]
-      elif (attrList[i][0] in attribList):
-        attrList[i][0] = attribList[attrList[i][0]]
+      if len(attrList[i]) > 1:
+        if attrList[i][0].lower() == "surf":
+          #quick solution probably not the best
+          attrList[i][1] = attrList[i][1].replace("grid!", "http://").replace("safe!", "https://")
+        if (tag.lower() in attribList and
+            type(attribList[tag.lower()]) is dict and
+            attrList[i][0].lower() in attribList[tag.lower()]):
+          attrList[i][0] = attribList[tag.lower()][attrList[i][0].lower()]
+        elif (attrList[i][0] in attribList):
+          attrList[i][0] = attribList[attrList[i][0]]
     attribs = ''
     for pairs in attrList:
-      attribs += " " + pairs[0] + "=" + pairs[1]
+      if len(pairs) > 1:
+        attribs += " " + pairs[0] + "=" + pairs[1]
+      else:
+        attribs += ", " + pairs[0]
   else:
     tag = inStr
     attribs = ''
@@ -98,9 +119,15 @@ for item in gridList:
       tags.append(tag)
       output.append("<" + tags[-1] + attribs + ">")
       if (len(item.split("{", 1)) > 1):
-        output.append(item.split("{", 1)[1])
+        if tags[-1] != "script":
+          output.append(item.split("{", 1)[1].replace("<", "&lt;").replace(">", "&gt;"))
+        else:
+          output.append(item.split("{", 1)[1])
     elif splitType == 1:
-      output.append("</" + tags.pop() + ">")
+      if (tags[-1] in singleTags):
+        tags.pop()
+      else:
+        output.append("</" + tags.pop() + ">")
       output.append(item)
     else:
       output.append(item)
