@@ -22,23 +22,6 @@ file = open(fileIn_Path, "r")
 gridFile = file.read()
 file.close()
 
-gridList = []
-pos = 0
-while pos < len(gridFile):
-  if gridFile[pos] == "~":
-    if not(pos == 0):
-      gridList.append(gridFile[:pos])
-    gridList.append(0)
-    gridFile = gridFile[pos+1:]
-    pos = -1
-  elif gridFile[pos] == "}":
-    if not(pos == 0):
-      gridList.append(gridFile[:pos])
-    gridList.append(1)
-    gridFile = gridFile[pos+1:]
-    pos = -1
-  pos += 1
-gridList.append(gridFile)
 
 tagList = {
   'metadata': 'head',
@@ -69,8 +52,6 @@ if not(faithful):
   attribList.update({
     
   })
-tags = []
-output = []
 
 def doTag(inStr):
   ## FIX THIS, IT DOESN'T GOOD ##
@@ -109,6 +90,26 @@ def doTag(inStr):
     tag = tagList[tag.lower()]
   return tag, attribs
 
+gridList = []
+pos = 0
+while pos < len(gridFile):
+  if gridFile[pos] == "~":
+    if not(pos == 0):
+      gridList.append(gridFile[:pos])
+    gridList.append(0)
+    gridFile = gridFile[pos+1:]
+    pos = -1
+  elif gridFile[pos] == "}":
+    if not(pos == 0):
+      gridList.append(gridFile[:pos])
+    gridList.append(1)
+    gridFile = gridFile[pos+1:]
+    pos = -1
+  pos += 1
+gridList.append(gridFile)
+tags = []
+output = []
+
 splitType = -1
 for item in gridList:
   if isinstance(item, int):
@@ -118,7 +119,7 @@ for item in gridList:
       tag, attribs = doTag(item.split("{", 1)[0])
       tags.append(tag)
       output.append("<" + tags[-1] + attribs + ">")
-      if (len(item.split("{", 1)) > 1):
+      if (len(item.split("{", 1)) > 1) and not(tags[-1] in singleTags):
         if tags[-1] != "script":
           output.append(item.split("{", 1)[1].replace("<", "&lt;").replace(">", "&gt;"))
         else:
