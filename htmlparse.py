@@ -35,7 +35,7 @@ attribList = {
   },
   "img"  : {
     "surf" : "src"
-  },
+  }, 
   "surf" : "href",
 }
 singleTags = [
@@ -56,20 +56,26 @@ if not(faithful):
 def doTag(inStr):
   ## FIX THIS, IT DOESN'T GOOD ##
   if "(" in inStr:
+    # get the tags if there are tags
     tag, attribs = inStr.split("(", 1)
     attribs = attribs[:-1]
+    
     # # do something to attribs here to HTML them # #
+    #THIS IS NOT HOW WE SHOULD BE SPLITTING THEM. Commas in quotes in attributes shouldn't be split
     attrFullList = attribs.split(",")
+    
     for i, attr in enumerate(attrFullList):
+      # if there's a space before the attribute, clip it
       if attr[0] == " ":
         attrFullList[i] = attr[1:]
     attrList = []
     for attrPair in attrFullList:
-      attrList.append(attrPair.split(":"))
+      #split at the first colon
+      attrList.append(attrPair.split(":", 1))
     for i in range(len(attrList)):
       if len(attrList[i]) > 1:
         if attrList[i][0].lower() == "surf":
-          #quick solution probably not the best
+          # swap grid! for http:// and safe! for https:// in surf attributes
           attrList[i][1] = attrList[i][1].replace("grid!", "http://").replace("safe!", "https://")
         if (tag.lower() in attribList and
             type(attribList[tag.lower()]) is dict and
