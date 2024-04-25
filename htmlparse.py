@@ -30,19 +30,25 @@ tagList = {
   'code'    : 'script',
 }
 attribList = {
-  "link" : {
+  "link"    : {
     "surf" : "href"
   },
-  "img"  : {
+  "img"     : {
     "surf" : "src"
   }, 
+  "code"    : {
+  	"surf" : "src"
+  },
+  "iframe"  : {
+  	"surf" : "src"
+  }
   "surf" : "href",
 }
 singleTags = [
   "area", "base", "br", "col",
   "embed", "hr", "img", "input",
   "link", "meta", "source", "track",
-  "wbr"
+  "wbr",
 ]
 
 if not(faithful):
@@ -74,13 +80,13 @@ def doTag(inStr):
       attrList.append(attrPair.split(":", 1))
     for i in range(len(attrList)):
       if len(attrList[i]) > 1:
-        if attrList[i][0].lower() == "surf":
+        if attrList[i][0].lower().strip() == "surf":
           # swap grid! for http:// and safe! for https:// in surf attributes
           attrList[i][1] = attrList[i][1].replace("grid!", "http://").replace("safe!", "https://")
         if (tag.lower() in attribList and
-            type(attribList[tag.lower()]) is dict and
-            attrList[i][0].lower() in attribList[tag.lower()]):
-          attrList[i][0] = attribList[tag.lower()][attrList[i][0].lower()]
+            type(attribList[tag.lower().strip()]) is dict and
+            attrList[i][0].lower().strip() in attribList[tag.lower().strip()]):
+          attrList[i][0] = attribList[tag.lower().strip()][attrList[i][0].lower().strip()]
         elif (attrList[i][0] in attribList):
           attrList[i][0] = attribList[attrList[i][0]]
     attribs = ''
