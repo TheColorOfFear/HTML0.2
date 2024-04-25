@@ -41,7 +41,7 @@ attribList = {
   },
   "iframe"  : {
   	"surf" : "src"
-  }
+  },
   "surf" : "href",
 }
 singleTags = [
